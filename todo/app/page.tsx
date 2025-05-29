@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
   Plus,
   Search,
@@ -10,138 +10,149 @@ import {
   Trash2,
   Moon,
   Sun,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useTheme } from "next-themes";
-import { api } from "@/lib/api";
-import { toast } from "sonner";
-import type { Todo } from "@/lib/types";
+} from '@/components/ui/select'
+import { useTheme } from 'next-themes'
+import { api } from '@/lib/api'
+import { toast } from 'sonner'
+import type { Todo } from '@/lib/types'
 
 export default function TodoApp() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-  const [loading, setLoading] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const [todos, setTodos] = useState<Todo[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [loading, setLoading] = useState(false)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
   // Fetch todos from API on component mount
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    fetchTodos()
+  }, [])
 
   // Prevent hydration mismatch for theme
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
+
+  // Debug theme changes
+  useEffect(() => {
+    if (mounted) {
+      console.log('Current theme:', theme)
+      document.documentElement.classList.toggle('dark', theme === 'dark')
+    }
+  }, [theme, mounted])
 
   const fetchTodos = async () => {
     try {
-      setLoading(true);
-      const response = await api.getTodos();
-      setTodos(response.data);
+      setLoading(true)
+      const response = await api.getTodos()
+      setTodos(response.data)
     } catch (error) {
-      toast.error("Failed to fetch todos");
-      console.error("Error fetching todos:", error);
+      toast.error('Failed to fetch todos')
+      console.error('Error fetching todos:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const addTodo = async (title: string) => {
-    if (!title.trim()) return;
+    if (!title.trim()) return
 
     try {
-      const response = await api.createTodo({ title: title.trim() });
-      setTodos((prev) => [response.data, ...prev]);
-      toast.success("Todo added successfully!");
+      const response = await api.createTodo({ title: title.trim() })
+      setTodos(prev => [response.data, ...prev])
+      toast.success('Todo added successfully!')
     } catch (error) {
-      toast.error("Failed to add todo");
-      console.error("Error adding todo:", error);
+      toast.error('Failed to add todo')
+      console.error('Error adding todo:', error)
     }
-  };
+  }
 
   const toggleTodo = async (id: string) => {
     try {
-      const response = await api.toggleTodo(id);
-      setTodos((prev) =>
-        prev.map((todo) => (todo.id === id ? response.data : todo)),
-      );
-      toast.success("Todo updated!");
+      const response = await api.toggleTodo(id)
+      setTodos(prev =>
+        prev.map(todo => (todo.id === id ? response.data : todo))
+      )
+      toast.success('Todo updated!')
     } catch (error) {
-      toast.error("Failed to update todo");
-      console.error("Error toggling todo:", error);
+      toast.error('Failed to update todo')
+      console.error('Error toggling todo:', error)
     }
-  };
+  }
 
   const deleteTodo = async (id: string) => {
     try {
-      await api.deleteTodo(id);
-      setTodos((prev) => prev.filter((todo) => todo.id !== id));
-      toast.success("Todo deleted!");
+      await api.deleteTodo(id)
+      setTodos(prev => prev.filter(todo => todo.id !== id))
+      toast.success('Todo deleted!')
     } catch (error) {
-      toast.error("Failed to delete todo");
-      console.error("Error deleting todo:", error);
+      toast.error('Failed to delete todo')
+      console.error('Error deleting todo:', error)
     }
-  };
+  }
 
   const deleteCompleted = async () => {
     try {
-      await api.deleteCompletedTodos();
-      setTodos((prev) => prev.filter((todo) => !todo.completed));
-      toast.success("Completed todos deleted!");
+      await api.deleteCompletedTodos()
+      setTodos(prev => prev.filter(todo => !todo.completed))
+      toast.success('Completed todos deleted!')
     } catch (error) {
-      toast.error("Failed to delete completed todos");
-      console.error("Error deleting completed todos:", error);
+      toast.error('Failed to delete completed todos')
+      console.error('Error deleting completed todos:', error)
     }
-  };
+  }
 
   const markAllComplete = async () => {
     try {
-      const response = await api.markAllComplete();
-      setTodos(response.data);
-      toast.success("All todos marked as complete!");
+      const response = await api.markAllComplete()
+      setTodos(response.data)
+      toast.success('All todos marked as complete!')
     } catch (error) {
-      toast.error("Failed to mark all complete");
-      console.error("Error marking all complete:", error);
+      toast.error('Failed to mark all complete')
+      console.error('Error marking all complete:', error)
     }
-  };
+  }
+
+  const toggleTheme = () => {
+    console.log('Toggling theme from:', theme)
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
 
   const filteredAndSortedTodos = todos
-    .filter((todo) =>
-      todo.title.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
+    .filter(todo => todo.title.toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => {
       switch (sortBy) {
-        case "newest":
+        case 'newest':
           return (
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        case "oldest":
+          )
+        case 'oldest':
           return (
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        case "alphabetical":
-          return a.title.localeCompare(b.title);
-        case "completed":
-          return Number(b.completed) - Number(a.completed);
+          )
+        case 'alphabetical':
+          return a.title.localeCompare(b.title)
+        case 'completed':
+          return Number(b.completed) - Number(a.completed)
         default:
-          return 0;
+          return 0
       }
-    });
+    })
 
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const totalCount = todos.length;
+  const completedCount = todos.filter(todo => todo.completed).length
+  const totalCount = todos.length
 
   if (loading) {
     return (
@@ -151,8 +162,10 @@ export default function TodoApp() {
           <p className="text-gray-600 dark:text-white">Loading todos...</p>
         </div>
       </div>
-    );
+    )
   }
+
+  if (!mounted) return null
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gray-900 p-4">
@@ -170,12 +183,12 @@ export default function TodoApp() {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={toggleTheme}
             className="rounded-full bg-white dark:bg-gray-800 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-lg"
           >
             {!mounted ? (
               <div className="h-5 w-5" />
-            ) : theme === "dark" ? (
+            ) : theme === 'dark' ? (
               <Sun className="h-5 w-5 text-yellow-400" />
             ) : (
               <Moon className="h-5 w-5 text-gray-700" />
@@ -253,22 +266,22 @@ export default function TodoApp() {
               <Input
                 placeholder="Enter a task to add to your todo list"
                 className="flex-1 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    const target = e.target as HTMLInputElement;
-                    addTodo(target.value);
-                    target.value = "";
+                onKeyPress={e => {
+                  if (e.key === 'Enter') {
+                    const target = e.target as HTMLInputElement
+                    addTodo(target.value)
+                    target.value = ''
                   }
                 }}
               />
               <Button
-                onClick={(e) => {
+                onClick={e => {
                   const input = e.currentTarget.parentElement?.querySelector(
-                    "input",
-                  ) as HTMLInputElement;
+                    'input'
+                  ) as HTMLInputElement
                   if (input) {
-                    addTodo(input.value);
-                    input.value = "";
+                    addTodo(input.value)
+                    input.value = ''
                   }
                 }}
                 className="px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
@@ -289,7 +302,7 @@ export default function TodoApp() {
                 <Input
                   placeholder="Search tasks..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400"
                 />
               </div>
@@ -362,23 +375,23 @@ export default function TodoApp() {
               <div className="text-center py-12">
                 <Circle className="h-16 w-16 text-gray-300 dark:text-gray-500 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  {todos.length === 0 ? "No todos found" : "No matching tasks"}
+                  {todos.length === 0 ? 'No todos found' : 'No matching tasks'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
                   {todos.length === 0
-                    ? "Add some tasks to get started!"
-                    : "Try adjusting your search or filters"}
+                    ? 'Add some tasks to get started!'
+                    : 'Try adjusting your search or filters'}
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
-                {filteredAndSortedTodos.map((todo) => (
+                {filteredAndSortedTodos.map(todo => (
                   <div
                     key={todo.id}
                     className={`flex items-center gap-3 p-4 rounded-lg border transition-all hover:shadow-md ${
                       todo.completed
-                        ? "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                        : "bg-white dark:bg-gray-750 border-gray-200 dark:border-gray-600"
+                        ? 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
+                        : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600'
                     }`}
                   >
                     <Button
@@ -398,8 +411,8 @@ export default function TodoApp() {
                       <p
                         className={`${
                           todo.completed
-                            ? "line-through text-gray-500 dark:text-gray-400"
-                            : "text-gray-900 dark:text-white"
+                            ? 'line-through text-gray-500 dark:text-gray-400'
+                            : 'text-gray-900 dark:text-white'
                         }`}
                       >
                         {todo.title}
@@ -434,5 +447,5 @@ export default function TodoApp() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

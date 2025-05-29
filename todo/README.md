@@ -42,28 +42,32 @@ A modern, full-featured todo application built with Next.js, TypeScript, Redux, 
 - **React Testing Library** - Component testing
 - **MSW** - API mocking (optional)
 
-## 📦 Installation
+## 📦 Installation & Running
 
 1. **Clone the repository**
-   \`\`\`bash
+
+   ```bash
    git clone <your-repo-url>
    cd todo-app
-   \`\`\`
+   ```
 
-2. **Install dependencies**
-   \`\`\`bash
-   npm install
-   \`\`\`
+2. **Set up environment variables**
 
-3. **Set up environment variables**
-   \`\`\`bash
+   ```bash
    cp .env.example .env.local
-   \`\`\`
+   ```
 
-4. **Run the development server**
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+3. **Build the project**
+
+   ```bash
+   npm run build
+   ```
+
+4. **Start the production server**
+
+   ```bash
+   npm run start
+   ```
 
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
